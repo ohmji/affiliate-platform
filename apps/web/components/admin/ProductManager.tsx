@@ -17,7 +17,12 @@ import {
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 
-import { createProduct, fetchProductOffers, ProductOffer } from '../../lib/api-client';
+import {
+  createProduct,
+  fetchProductOffers,
+  ProductOffer,
+  ProductOffersResponse
+} from '../../lib/api-client';
 
 export function ProductManager() {
   const [url, setUrl] = useState('');
@@ -26,6 +31,9 @@ export function ProductManager() {
   const [productId, setProductId] = useState<string | null>(null);
   const [offers, setOffers] = useState<ProductOffer[] | null>(null);
   const [offerProductId, setOfferProductId] = useState('');
+  const [productDetails, setProductDetails] = useState<ProductOffersResponse['product'] | null>(
+    null
+  );
 
   const createProductMutation = useMutation({
     mutationFn: async () => {
@@ -45,6 +53,7 @@ export function ProductManager() {
       setProductId(id);
       setOfferProductId(id);
       const data = await fetchProductOffers(id);
+      setProductDetails(data.product);
       setOffers(data.offers);
     }
   });
@@ -52,9 +61,12 @@ export function ProductManager() {
   const fetchOffersMutation = useMutation({
     mutationFn: async () => {
       const data = await fetchProductOffers(offerProductId);
-      return data.offers;
+      return data;
     },
-    onSuccess: (data) => setOffers(data)
+    onSuccess: (data) => {
+      setProductDetails(data.product);
+      setOffers(data.offers);
+    }
   });
 
   const canSubmit = Boolean(url || sku);
@@ -167,6 +179,40 @@ export function ProductManager() {
               </Alert>
             ) : null}
 
+            {productDetails ? (
+              <Stack
+                direction="row"
+                spacing={2}
+                alignItems="center"
+                sx={{ mb: 2, flexWrap: 'wrap' }}
+              >
+                {productDetails.imageUrl ? (
+                  <Box
+                    component="img"
+                    src={productDetails.imageUrl}
+                    alt={productDetails.title ?? 'Product image'}
+                    sx={{
+                      width: 96,
+                      height: 96,
+                      objectFit: 'cover',
+                      borderRadius: 2,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      bgcolor: 'background.paper'
+                    }}
+                  />
+                ) : null}
+                <Box>
+                  <Typography variant="subtitle1" fontWeight={600}>
+                    {productDetails.title ?? 'Product details unavailable'}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Product ID: {productDetails.id}
+                  </Typography>
+                </Box>
+              </Stack>
+            ) : null}
+
             {fetchOffersMutation.isPending ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
                 <CircularProgress size={32} />
@@ -174,33 +220,38 @@ export function ProductManager() {
             ) : null}
 
             {offers ? (
-              <Stack spacing={2}>
-                {offers.map((offer) => (
-                  <Box
-                    key={offer.id}
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 0.5,
-                      p: 2,
-                      borderRadius: 2,
-                      bgcolor: 'background.default',
-                      border: '1px solid',
-                      borderColor: 'divider'
-                    }}
-                  >
-                    <Typography variant="subtitle1" fontWeight={600}>
-                      {offer.storeName}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {offer.marketplace.toUpperCase()} • {offer.currency} {offer.price.toLocaleString()}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Last checked: {new Date(offer.lastCheckedAt).toLocaleString()}
-                    </Typography>
-                  </Box>
-                ))}
-              </Stack>
+              offers.length > 0 ? (
+                <Stack spacing={2}>
+                  {offers.map((offer) => (
+                    <Box
+                      key={offer.id}
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 0.5,
+                        p: 2,
+                        borderRadius: 2,
+                        bgcolor: 'background.default',
+                        border: '1px solid',
+                        borderColor: 'divider'
+                      }}
+                    >
+                      <Typography variant="subtitle1" fontWeight={600}>
+                        {offer.storeName}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {offer.marketplace.toUpperCase()} • {offer.currency}{' '}
+                        {offer.price.toLocaleString()}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Last checked: {new Date(offer.lastCheckedAt).toLocaleString()}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Stack>
+              ) : (
+                <Alert severity="info">No offers available yet for this product.</Alert>
+              )
             ) : (
               <Typography variant="body2" color="text.secondary">
                 Submit a product and fetch offers to see marketplace comparisons.
