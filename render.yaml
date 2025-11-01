@@ -12,7 +12,7 @@ services:
       corepack enable
       pnpm install --frozen-lockfile
       pnpm --filter @apps/api build
-    deployCommand: node apps/api/dist/database/migrations/run-migrations.js
+    preDeployCommand: node apps/api/dist/database/migrations/run-migrations.js
     startCommand: node apps/api/dist/main.js
     envVars:
       - key: NODE_VERSION
