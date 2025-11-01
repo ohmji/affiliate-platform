@@ -15,6 +15,8 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
+      "@adapters/core": ["packages/adapters/dist/index"],
+      "@adapters/core/*": ["packages/adapters/dist/*"],
       "@adapters/*": ["packages/adapters/dist/*"],
       "@event-bus/contracts": ["packages/event-contracts/dist/index"],
       "@event-bus/contracts/*": ["packages/event-contracts/dist/*"],
