@@ -10,6 +10,9 @@ services:
     healthCheckPath: /api/health
     buildCommand: |
       set -eo pipefail
+      pwd
+      ls -al
+      ls pnpm-lock.yaml
       corepack enable
       pnpm install --frozen-lockfile --prod=false
       pnpm --filter @apps/api build
