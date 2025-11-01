@@ -1,0 +1,30 @@
+{
+  "name": "@workers/product-ingestion",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "ts-node src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@adapters/core": "workspace:*",
+    "@event-bus/contracts": "workspace:*",
+    "@event-bus/redis-event-bus": "workspace:*",
+    "bullmq": "^4.16.0",
+    "dotenv": "^16.4.5",
+    "ioredis": "^5.4.0",
+    "pg": "^8.12.0",
+    "pino": "^9.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "ulid": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "@types/pg": "^8.11.7"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "product": {
+    "title": "Dyson V15 Detect Absolute",
+    "imageUrl": "https://example.com/images/dyson-v15.jpg"
+  },
+  "offers": [
+    {
+      "marketplace": "lazada",
+      "storeName": "Dyson Official LazMall",
+      "price": 28900,
+      "currency": "THB"
+    },
+    {
+      "marketplace": "shopee",
+      "storeName": "Dyson Official Store",
+      "price": 29290,
+      "currency": "THB"
+    }
+  ]
+}

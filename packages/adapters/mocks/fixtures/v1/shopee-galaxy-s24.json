@@ -1,0 +1,20 @@
+{
+  "product": {
+    "title": "Samsung Galaxy S24 256GB",
+    "imageUrl": "https://example.com/images/galaxy-s24.jpg"
+  },
+  "offers": [
+    {
+      "marketplace": "shopee",
+      "storeName": "Shopee Samsung Official",
+      "price": 29990,
+      "currency": "THB"
+    },
+    {
+      "marketplace": "lazada",
+      "storeName": "Lazada Samsung Store",
+      "price": 30290,
+      "currency": "THB"
+    }
+  ]
+}

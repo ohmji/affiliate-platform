@@ -1,0 +1,20 @@
+{
+  "product": {
+    "title": "Apple MacBook Air 13\" M3 8GB/256GB",
+    "imageUrl": "https://example.com/images/macbook-air-m3.jpg"
+  },
+  "offers": [
+    {
+      "marketplace": "shopee",
+      "storeName": "Shopee Apple Flagship",
+      "price": 39900,
+      "currency": "THB"
+    },
+    {
+      "marketplace": "lazada",
+      "storeName": "Lazada Apple Store",
+      "price": 40290,
+      "currency": "THB"
+    }
+  ]
+}
