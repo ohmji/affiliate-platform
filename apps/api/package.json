@@ -16,6 +16,7 @@
     "seed:mock": "ts-node -r tsconfig-paths/register src/scripts/seed-mock-data.ts"
   },
   "dependencies": {
+    "@adapters/core": "workspace:*",
     "@event-bus/contracts": "workspace:*",
     "@event-bus/redis-event-bus": "workspace:*",
     "@nestjs/bullmq": "^10.0.1",
