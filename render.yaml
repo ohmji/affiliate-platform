@@ -9,8 +9,9 @@ services:
     autoDeploy: true
     healthCheckPath: /api/health
     buildCommand: |
+      set -eo pipefail
       corepack enable
-      pnpm install --frozen-lockfile
+      pnpm install --frozen-lockfile --prod=false
       pnpm --filter @apps/api build
     startCommand: |
       set -e
