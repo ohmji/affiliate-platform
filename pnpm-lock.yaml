@@ -10,6 +10,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@adapters/core':
+        specifier: workspace:*
+        version: link:../../packages/adapters
       '@event-bus/contracts':
         specifier: workspace:*
         version: link:../../packages/event-contracts
