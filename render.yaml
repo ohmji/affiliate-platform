@@ -11,7 +11,7 @@ services:
     buildCommand: |
       corepack enable
       pnpm install --frozen-lockfile --prod=false
-      pnpm --filter @apps/api exec nest build
+      pnpm --filter @apps/api build
     startCommand: |
       set -e
       node apps/api/dist/database/migrations/run-migrations.js
