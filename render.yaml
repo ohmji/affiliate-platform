@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: affiliate-api
+    env: node
+    plan: free
+    region: oregon
+    branch: main
+    rootDir: .
+    autoDeploy: true
+    healthCheckPath: /api/health
+    buildCommand: |
+      corepack enable
+      pnpm install --frozen-lockfile
+      pnpm --filter @apps/api build
+    deployCommand: node apps/api/dist/database/migrations/run-migrations.js
+    startCommand: node apps/api/dist/main.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: '10000'
+      - key: USE_MOCK_DATA
+        value: 'false'
+      - key: EVENT_STREAM_PREFIX
+        value: affiliate
+      - key: EVENT_NAMESPACE
+        value: production
+      - key: REDIRECT_ALLOWLIST
+        value: lazada.co.th,shopee.co.th
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: REDIS_HOST
+        sync: false
+      - key: REDIS_PORT
+        sync: false
+      - key: REDIS_USERNAME
+        sync: false
+      - key: REDIS_PASSWORD
+        sync: false
+      - key: REDIS_TLS
+        sync: false
+      - key: IP_HASH_SECRET
+        sync: false
