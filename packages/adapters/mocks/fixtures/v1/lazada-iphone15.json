@@ -1,0 +1,20 @@
+{
+  "product": {
+    "title": "Apple iPhone 15 128GB",
+    "imageUrl": "https://example.com/images/iphone15.jpg"
+  },
+  "offers": [
+    {
+      "marketplace": "lazada",
+      "storeName": "Lazada Flagship Store",
+      "price": 32990,
+      "currency": "THB"
+    },
+    {
+      "marketplace": "shopee",
+      "storeName": "Shopee Mall",
+      "price": 32750,
+      "currency": "THB"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": false,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@adapters/*": ["packages/adapters/dist/*"],
+      "@event-bus/contracts": ["packages/event-contracts/dist/index"],
+      "@event-bus/contracts/*": ["packages/event-contracts/dist/*"],
+      "@event-bus/redis-event-bus": ["packages/event-bus/dist/index"],
+      "@event-bus/redis-event-bus/*": ["packages/event-bus/dist/*"]
+    }
+  }
+}

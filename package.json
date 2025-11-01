@@ -1,0 +1,16 @@
+{
+  "name": "affiliate-platform",
+  "private": true,
+  "packageManager": "pnpm@8.15.8",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "format": "pnpm -r format",
+    "mock:seed": "pnpm --filter @apps/api run seed:mock && pnpm --filter @workers/mock-click-emitter run seed"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@workers/mock-click-emitter",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "ts-node src/index.ts",
+    "seed": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@event-bus/contracts": "workspace:*",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "ulid": "^2.3.0"
+  }
+}

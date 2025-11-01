@@ -1,0 +1,41 @@
+{
+  "name": "@event-bus/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./base": {
+      "import": "./dist/base.js",
+      "require": "./dist/base.js",
+      "types": "./dist/base.d.ts"
+    },
+    "./events": {
+      "import": "./dist/events.js",
+      "require": "./dist/events.js",
+      "types": "./dist/events.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -w --preserveWatchOutput",
+    "lint": "eslint \"src/**/*.ts\"",
+    "format": "prettier --check \"src/**/*.ts\"",
+    "test": "echo \"No tests yet\""
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  }
+}
