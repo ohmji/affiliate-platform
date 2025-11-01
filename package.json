@@ -1,7 +1,7 @@
 {
   "name": "affiliate-platform",
   "private": true,
-  "packageManager": "pnpm@8.15.8",
+  "packageManager": "pnpm@9.13.2",
   "engines": {
     "node": ">=20.0.0"
   },
