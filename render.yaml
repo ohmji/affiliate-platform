@@ -12,6 +12,7 @@ services:
       set -eo pipefail
       corepack enable
       pnpm install --frozen-lockfile --prod=false
+      find . -name tsconfig.tsbuildinfo -delete
       pnpm --filter @event-bus/contracts build
       pnpm --filter @event-bus/redis-event-bus build
       pnpm --filter @apps/api build

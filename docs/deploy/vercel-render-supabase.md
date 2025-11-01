@@ -52,7 +52,7 @@ Keep the following secrets handy:
    - **Name**: `affiliate-api` (can be changed).
    - **Plan**: `free` (upgrade later for more resources).
    - **Region**: keep close to Supabase.
-   - **Build Command**: installs dependencies (`pnpm install --frozen-lockfile --prod=false`), builds the shared event-bus packages (`pnpm --filter @event-bus/contracts build` and `pnpm --filter @event-bus/redis-event-bus build`), then compiles the API (`pnpm --filter @apps/api build`).
+   - **Build Command**: installs dependencies (`pnpm install --frozen-lockfile --prod=false`), clears TypeScript build caches (`find . -name tsconfig.tsbuildinfo -delete`), builds the shared event-bus packages, then compiles the API.
    - **Start Command**: runs migrations first, then boots the NestJS app (free-tier limitation that disallows a dedicated pre-deploy step).
 4. Provide environment variables (Render will prompt for the ones marked `sync: false`):
 
