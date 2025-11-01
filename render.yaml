@@ -18,7 +18,6 @@ services:
       pnpm --filter @apps/api build
     startCommand: |
       set -e
-      node apps/api/dist/database/migrations/run-migrations.js
       node apps/api/dist/main.js
     envVars:
       - key: NODE_VERSION
