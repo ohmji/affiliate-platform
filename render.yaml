@@ -10,7 +10,7 @@ services:
     healthCheckPath: /api/health
     buildCommand: |
       corepack enable
-      pnpm install --frozen-lockfile --prod=false
+      pnpm install
       pnpm --filter @apps/api build
     startCommand: |
       set -e
