@@ -52,3 +52,48 @@ services:
         sync: false
       - key: IP_HASH_SECRET
         sync: false
+  - type: worker
+    name: product-ingestion-worker
+    env: node
+    plan: free
+    region: oregon
+    branch: main
+    rootDir: .
+    autoDeploy: true
+    buildCommand: |
+      set -eo pipefail
+      corepack enable
+      pnpm install --frozen-lockfile --prod=false
+      find . -name tsconfig.tsbuildinfo -delete
+      pnpm --filter @event-bus/contracts build
+      pnpm --filter @event-bus/redis-event-bus build
+      pnpm --filter @adapters/core build
+      pnpm --filter @workers/product-ingestion build
+    startCommand: |
+      set -e
+      node workers/product-ingestion/dist/index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NODE_ENV
+        value: production
+      - key: USE_MOCK_DATA
+        value: 'false'
+      - key: EVENT_STREAM_PREFIX
+        value: affiliate
+      - key: EVENT_NAMESPACE
+        value: production
+      - key: REDIS_HOST
+        sync: false
+      - key: REDIS_PORT
+        sync: false
+      - key: REDIS_USERNAME
+        sync: false
+      - key: REDIS_PASSWORD
+        sync: false
+      - key: REDIS_TLS
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: PRODUCT_INGESTION_CONCURRENCY
+        value: '2'
