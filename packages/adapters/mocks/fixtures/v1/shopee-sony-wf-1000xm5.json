@@ -1,0 +1,20 @@
+{
+  "product": {
+    "title": "Sony หูฟัง In Ear รุ่น WF-1000XM5",
+    "imageUrl": "https://down-th.img.susercontent.com/file/th-11134207-7ras8-m129jevbzypl46.webp"
+  },
+  "offers": [
+    {
+      "marketplace": "shopee",
+      "storeName": "THE VOLUME MALL",
+      "price": 8084,
+      "currency": "THB"
+    },
+    {
+      "marketplace": "lazada",
+      "storeName": "Sony Official Store",
+      "price": 8490,
+      "currency": "THB"
+    }
+  ]
+}
