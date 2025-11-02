@@ -198,4 +198,135 @@ describe('CampaignsService', () => {
       })
     ).rejects.toBeInstanceOf(NotFoundException);
   });
+
+  it('returns landing data with products, offers, and links for published campaigns', async () => {
+    const lastCheckedAt = new Date('2024-04-01T10:00:00.000Z');
+    campaignRepositoryMock.findOne.mockResolvedValue({
+      id: 'campaign-landing',
+      name: 'Summer Savings',
+      utmCampaign: 'summer',
+      startAt: new Date('2024-04-01T00:00:00.000Z'),
+      endAt: null,
+      status: 'published',
+      createdAt: now,
+      updatedAt: now,
+      links: [
+        {
+          shortCode: 'lz123',
+          marketplace: 'lazada',
+          targetUrl: 'https://lazada.example/summer',
+          product: {
+            id: 'prod-1',
+            title: 'Noise Cancelling Headphones',
+            imageUrl: 'https://cdn.example/headphones.jpg',
+            offers: [
+              {
+                id: 'offer-1',
+                marketplace: 'lazada',
+                storeName: 'Lazada Official',
+                price: 8990,
+                currency: 'THB',
+                lastCheckedAt
+              },
+              {
+                id: 'offer-2',
+                marketplace: 'shopee',
+                storeName: 'Shopee Mall',
+                price: 9200,
+                currency: 'THB',
+                lastCheckedAt
+              }
+            ]
+          }
+        },
+        {
+          shortCode: 'sp456',
+          marketplace: 'shopee',
+          targetUrl: 'https://shopee.example/summer',
+          product: {
+            id: 'prod-1',
+            title: 'Noise Cancelling Headphones',
+            imageUrl: 'https://cdn.example/headphones.jpg',
+            offers: [
+              {
+                id: 'offer-1',
+                marketplace: 'lazada',
+                storeName: 'Lazada Official',
+                price: 8990,
+                currency: 'THB',
+                lastCheckedAt
+              },
+              {
+                id: 'offer-2',
+                marketplace: 'shopee',
+                storeName: 'Shopee Mall',
+                price: 9200,
+                currency: 'THB',
+                lastCheckedAt
+              }
+            ]
+          }
+        }
+      ]
+    } as unknown as Campaign);
+
+    const result = await service.getLanding('campaign-landing');
+
+    expect(result).toEqual({
+      campaign: {
+        id: 'campaign-landing',
+        name: 'Summer Savings',
+        utmCampaign: 'summer',
+        startAt: '2024-04-01T00:00:00.000Z',
+        endAt: null
+      },
+      products: [
+        {
+          id: 'prod-1',
+          title: 'Noise Cancelling Headphones',
+          imageUrl: 'https://cdn.example/headphones.jpg',
+          offers: [
+            {
+              id: 'offer-1',
+              marketplace: 'lazada',
+              storeName: 'Lazada Official',
+              price: 8990,
+              currency: 'THB',
+              lastCheckedAt: lastCheckedAt.toISOString()
+            },
+            {
+              id: 'offer-2',
+              marketplace: 'shopee',
+              storeName: 'Shopee Mall',
+              price: 9200,
+              currency: 'THB',
+              lastCheckedAt: lastCheckedAt.toISOString()
+            }
+          ],
+          best: {
+            marketplace: 'lazada',
+            price: 8990
+          },
+          links: {
+            lazada: {
+              shortCode: 'lz123',
+              marketplace: 'lazada',
+              targetUrl: 'https://lazada.example/summer'
+            },
+            shopee: {
+              shortCode: 'sp456',
+              marketplace: 'shopee',
+              targetUrl: 'https://shopee.example/summer'
+            }
+          }
+        }
+      ]
+    });
+  });
+
+  it('throws when landing data missing because campaign not published', async () => {
+    campaignRepositoryMock.findOne.mockResolvedValue(null);
+
+    await expect(service.getLanding('unknown')).rejects.toBeInstanceOf(NotFoundException);
+  });
 });

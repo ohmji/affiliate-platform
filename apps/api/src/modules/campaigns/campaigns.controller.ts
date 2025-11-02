@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 
 import { CampaignsService } from './campaigns.service';
 import { UpsertCampaignDto } from './dto/upsert-campaign.dto';
@@ -15,5 +15,10 @@ export class CampaignsController {
   @Post()
   upsertCampaign(@Body() dto: UpsertCampaignDto) {
     return this.campaignsService.upsert(dto);
+  }
+
+  @Get(':id/landing')
+  getCampaignLanding(@Param('id') id: string) {
+    return this.campaignsService.getLanding(id);
   }
 }

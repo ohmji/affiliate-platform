@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Chip, Grid, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Chip, Grid, Typography } from '@mui/material';
 
 import { AppShell } from '../../components/layout/AppShell';
 
@@ -56,6 +56,15 @@ export default async function CampaignLandingPage() {
                     Landing pages are powered by ISR via the Campaign Publisher agent. Update campaign
                     creatives from the admin area to trigger a revalidate event instantly.
                   </Typography>
+                  <Button
+                    href={`/campaigns/${campaign.id}`}
+                    component="a"
+                    variant="contained"
+                    size="small"
+                    sx={{ mt: 2 }}
+                  >
+                    View landing page
+                  </Button>
                 </CardContent>
               </Card>
             </Grid>

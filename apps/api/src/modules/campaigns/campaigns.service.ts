@@ -115,6 +115,103 @@ export class CampaignsService {
     return this.toDto(saved);
   }
 
+  async getLanding(campaignId: string) {
+    const campaign = await this.campaignRepository.findOne({
+      where: { id: campaignId, status: 'published' },
+      relations: {
+        links: {
+          product: {
+            offers: true
+          }
+        }
+      }
+    });
+
+    if (!campaign) {
+      throw new NotFoundException(`Campaign ${campaignId} not found or not published`);
+    }
+
+    const productsMap = new Map<
+      string,
+      {
+        id: string;
+        title: string | null;
+        imageUrl: string | null;
+        offers: Array<{
+          id: string;
+          marketplace: string;
+          storeName: string;
+          price: number;
+          currency: string;
+          lastCheckedAt: string;
+        }>;
+        best: { marketplace: string; price: number } | null;
+        links: Record<
+          string,
+          {
+            shortCode: string;
+            marketplace: string;
+            targetUrl: string;
+          }
+        >;
+      }
+    >();
+
+    for (const link of campaign.links ?? []) {
+      const product = link.product;
+      if (!product) {
+        continue;
+      }
+
+      let entry = productsMap.get(product.id);
+
+      if (!entry) {
+        const offers = (product.offers ?? []).map((offer) => ({
+          id: offer.id,
+          marketplace: offer.marketplace,
+          storeName: offer.storeName,
+          price: Number(offer.price),
+          currency: offer.currency,
+          lastCheckedAt: offer.lastCheckedAt.toISOString()
+        }));
+
+        entry = {
+          id: product.id,
+          title: product.title ?? null,
+          imageUrl: product.imageUrl ?? null,
+          offers,
+          best: this.pickBestOffer(offers),
+          links: {}
+        };
+
+        productsMap.set(product.id, entry);
+      }
+
+      entry.links[link.marketplace] = {
+        shortCode: link.shortCode,
+        marketplace: link.marketplace,
+        targetUrl: link.targetUrl
+      };
+    }
+
+    const products = Array.from(productsMap.values()).sort((a, b) => {
+      const aTitle = a.title ?? '';
+      const bTitle = b.title ?? '';
+      return aTitle.localeCompare(bTitle);
+    });
+
+    return {
+      campaign: {
+        id: campaign.id,
+        name: campaign.name,
+        utmCampaign: campaign.utmCampaign,
+        startAt: campaign.startAt?.toISOString() ?? null,
+        endAt: campaign.endAt?.toISOString() ?? null
+      },
+      products
+    };
+  }
+
   private async publishCampaign(campaign: Campaign) {
     const event: CampaignPublishedEvent = {
       id: ulid(),
@@ -141,6 +238,26 @@ export class CampaignsService {
       startAt: campaign.startAt?.toISOString() ?? null,
       endAt: campaign.endAt?.toISOString() ?? null,
       status: campaign.status
+    };
+  }
+
+  private pickBestOffer(
+    offers: Array<{
+      marketplace: string;
+      price: number;
+      storeName: string;
+      currency: string;
+      lastCheckedAt: string;
+    }>
+  ) {
+    if (!offers.length) {
+      return null;
+    }
+    const sorted = [...offers].sort((a, b) => a.price - b.price);
+    const best = sorted[0];
+    return {
+      marketplace: best.marketplace,
+      price: best.price
     };
   }
 }
