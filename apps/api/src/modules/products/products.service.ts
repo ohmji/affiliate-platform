@@ -28,6 +28,21 @@ export class ProductsService {
     private readonly queues: QueuesService
   ) {}
 
+  async listProducts() {
+    const products = await this.productsRepository.find({
+      order: { createdAt: 'DESC' },
+      take: 50
+    });
+
+    return products.map((product) => ({
+      id: product.id,
+      title: product.title,
+      normalizedSku: product.normalizedSku,
+      normalizedUrl: product.normalizedUrl,
+      createdAt: product.createdAt.toISOString()
+    }));
+  }
+
   async createProduct(dto: CreateProductDto) {
     if (!dto.url && !dto.sku) {
       throw new BadRequestException('Either url or sku is required');

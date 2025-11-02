@@ -26,6 +26,24 @@ export type ProductOffersResponse = {
   best: { marketplace: string; price: number } | null;
 };
 
+export type ProductSummary = {
+  id: string;
+  title: string | null;
+  normalizedSku: string | null;
+  normalizedUrl: string | null;
+  createdAt: string;
+};
+
+export type CampaignSummary = {
+  id: string;
+  name: string;
+  status: 'draft' | 'published';
+  utmCampaign: string | null;
+  startAt: string | null;
+  endAt: string | null;
+  createdAt: string;
+};
+
 export type DashboardSnapshot = {
   byProduct: Record<string, { clicks: number; title: string | null }>;
   byCampaign: Record<string, { clicks: number; name: string | null }>;
@@ -48,6 +66,11 @@ export async function createProduct(payload: {
   return response.data;
 }
 
+export async function fetchProducts(): Promise<ProductSummary[]> {
+  const response = await apiClient.get<ProductSummary[]>('/products');
+  return response.data;
+}
+
 export async function upsertCampaign(payload: {
   id?: string;
   name: string;
@@ -57,6 +80,11 @@ export async function upsertCampaign(payload: {
   status?: 'draft' | 'published';
 }) {
   const response = await apiClient.post('/campaigns', payload);
+  return response.data;
+}
+
+export async function fetchCampaigns(): Promise<CampaignSummary[]> {
+  const response = await apiClient.get<CampaignSummary[]>('/campaigns');
   return response.data;
 }
 

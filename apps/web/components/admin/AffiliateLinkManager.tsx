@@ -1,23 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Button,
   Card,
   CardContent,
   Grid,
+  FormControlLabel,
   MenuItem,
   Stack,
   TextField,
+  Switch,
   Typography
 } from '@mui/material';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { createLink, LinkResponse } from '../../lib/api-client';
+import {
+  createLink,
+  fetchCampaigns,
+  fetchProducts,
+  LinkResponse
+} from '../../lib/api-client';
+
+type FormState = {
+  productId: string;
+  campaignId: string;
+  marketplace: 'lazada' | 'shopee';
+  targetUrl: string;
+  utmSource: string;
+  utmMedium: string;
+  utmCampaign: string;
+};
 
 export function AffiliateLinkManager() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormState>({
     productId: '',
     campaignId: '',
     marketplace: 'lazada',
@@ -29,17 +46,59 @@ export function AffiliateLinkManager() {
   const [result, setResult] = useState<null | Pick<LinkResponse, 'id' | 'shortCode'>>(
     null
   );
+  const [attachCampaign, setAttachCampaign] = useState(false);
+
+  const productsQuery = useQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts
+  });
+
+  const campaignsQuery = useQuery({
+    queryKey: ['campaigns'],
+    queryFn: fetchCampaigns,
+    enabled: attachCampaign
+  });
+
+  useEffect(() => {
+    if (productsQuery.isLoading || !productsQuery.data?.length || form.productId) {
+      return;
+    }
+    const firstProduct = productsQuery.data[0];
+    if (firstProduct) {
+      setForm((prev) => ({ ...prev, productId: firstProduct.id }));
+    }
+  }, [productsQuery.data, productsQuery.isLoading, form.productId]);
+
+  useEffect(() => {
+    if (!attachCampaign) {
+      return;
+    }
+    if (campaignsQuery.isLoading || !campaignsQuery.data?.length || form.campaignId) {
+      return;
+    }
+    const firstCampaign = campaignsQuery.data[0];
+    if (firstCampaign) {
+      setForm((prev) => ({ ...prev, campaignId: firstCampaign.id }));
+    }
+  }, [
+    attachCampaign,
+    campaignsQuery.data,
+    campaignsQuery.isLoading,
+    form.campaignId
+  ]);
 
   const mutation = useMutation({
     mutationFn: async () => {
+      const campaignId =
+        attachCampaign && form.campaignId ? form.campaignId : undefined;
       const payload = {
         productId: form.productId,
-        marketplace: form.marketplace as 'lazada' | 'shopee',
+        marketplace: form.marketplace,
         targetUrl: form.targetUrl,
         utmSource: form.utmSource,
         utmMedium: form.utmMedium,
         utmCampaign: form.utmCampaign || undefined,
-        campaignId: form.campaignId || undefined
+        campaignId
       };
       const response = await createLink(payload);
       return response;
@@ -49,11 +108,20 @@ export function AffiliateLinkManager() {
     }
   });
 
-  const handleChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((prev) => ({ ...prev, [field]: event.target.value }));
-  };
+  const handleChange =
+    <K extends keyof FormState>(field: K) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setForm((prev) => ({
+        ...prev,
+        [field]: event.target.value as FormState[K]
+      }));
+    };
 
-  const canSubmit = Boolean(form.productId && form.targetUrl);
+  const canSubmit = Boolean(
+    form.productId &&
+    form.targetUrl &&
+    (!attachCampaign || form.campaignId)
+  );
 
   return (
     <Grid container spacing={3}>
@@ -75,16 +143,106 @@ export function AffiliateLinkManager() {
             >
               <TextField
                 required
-                label="Product ID"
+                select
+                label="Product"
                 value={form.productId}
                 onChange={handleChange('productId')}
+                disabled={
+                  productsQuery.isLoading ||
+                  productsQuery.isError ||
+                  !productsQuery.data?.length
+                }
+                helperText={
+                  productsQuery.isError
+                    ? 'Unable to load products. Refresh the page to retry.'
+                    : productsQuery.isLoading
+                    ? 'Loading available products…'
+                    : productsQuery.data?.length
+                    ? 'Select the product this affiliate link belongs to.'
+                    : 'Create a product before generating links.'
+                }
+                error={productsQuery.isError}
+              >
+                {productsQuery.isLoading ? (
+                  <MenuItem value="" disabled>
+                    Loading products…
+                  </MenuItem>
+                ) : productsQuery.isError ? (
+                  <MenuItem value="" disabled>
+                    Unable to load products
+                  </MenuItem>
+                ) : productsQuery.data?.length ? (
+                  productsQuery.data.map((product) => (
+                    <MenuItem key={product.id} value={product.id}>
+                      {product.title ??
+                        product.normalizedSku ??
+                        product.normalizedUrl ??
+                        product.id}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem value="" disabled>
+                    No products available
+                  </MenuItem>
+                )}
+              </TextField>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={attachCampaign}
+                    onChange={(_, checked) => {
+                      setAttachCampaign(checked);
+                      if (!checked) {
+                        setForm((prev) => ({ ...prev, campaignId: '' }));
+                      }
+                    }}
+                  />
+                }
+                label="Attach to campaign"
               />
-              <TextField
-                label="Campaign ID"
-                value={form.campaignId}
-                onChange={handleChange('campaignId')}
-                helperText="Optional. Attach the link to a campaign for attribution."
-              />
+              {attachCampaign ? (
+                <TextField
+                  select
+                  label="Campaign"
+                  value={form.campaignId}
+                  onChange={handleChange('campaignId')}
+                  disabled={
+                    campaignsQuery.isLoading ||
+                    campaignsQuery.isError ||
+                    !campaignsQuery.data?.length
+                  }
+                  helperText={
+                    campaignsQuery.isError
+                      ? 'Unable to load campaigns. Try again later.'
+                      : campaignsQuery.isLoading
+                      ? 'Loading campaigns…'
+                      : campaignsQuery.data?.length
+                      ? 'Select the campaign for attribution.'
+                      : 'No campaigns available yet.'
+                  }
+                  error={campaignsQuery.isError}
+                >
+                  {campaignsQuery.isLoading ? (
+                    <MenuItem value="" disabled>
+                      Loading campaigns…
+                    </MenuItem>
+                  ) : campaignsQuery.isError ? (
+                    <MenuItem value="" disabled>
+                      Unable to load campaigns
+                    </MenuItem>
+                  ) : campaignsQuery.data?.length ? (
+                    campaignsQuery.data.map((campaign) => (
+                      <MenuItem key={campaign.id} value={campaign.id}>
+                        {campaign.name} ({campaign.status})
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem value="" disabled>
+                      No campaigns to select
+                    </MenuItem>
+                  )}
+                </TextField>
+              ) : null}
               <TextField
                 select
                 label="Marketplace"

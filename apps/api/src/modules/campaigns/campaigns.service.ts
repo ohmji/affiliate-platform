@@ -22,6 +22,23 @@ export class CampaignsService {
     private readonly queues: QueuesService
   ) {}
 
+  async listRecent() {
+    const campaigns = await this.campaignRepository.find({
+      order: { createdAt: 'DESC' },
+      take: 50
+    });
+
+    return campaigns.map((campaign) => ({
+      id: campaign.id,
+      name: campaign.name,
+      status: campaign.status,
+      utmCampaign: campaign.utmCampaign,
+      startAt: campaign.startAt?.toISOString() ?? null,
+      endAt: campaign.endAt?.toISOString() ?? null,
+      createdAt: campaign.createdAt.toISOString()
+    }));
+  }
+
   async upsert(dto: UpsertCampaignDto) {
     const now = new Date().toISOString();
 

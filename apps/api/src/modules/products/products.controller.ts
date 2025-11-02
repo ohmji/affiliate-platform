@@ -7,6 +7,11 @@ import { ProductsService } from './products.service';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @Get()
+  listProducts() {
+    return this.productsService.listProducts();
+  }
+
   @Post()
   createProduct(@Body() dto: CreateProductDto) {
     return this.productsService.createProduct(dto);
