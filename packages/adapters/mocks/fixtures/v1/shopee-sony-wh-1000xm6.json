@@ -1,0 +1,20 @@
+{
+  "product": {
+    "title": "Sony หูฟัง Headphones รุ่น WH-1000XM6",
+    "imageUrl": "https://down-th.img.susercontent.com/file/th-11134207-81ztq-mdwq40r2ai2udb.webp"
+  },
+  "offers": [
+    {
+      "marketplace": "shopee",
+      "storeName": "Sony Official Store",
+      "price": 16990,
+      "currency": "THB"
+    },
+    {
+      "marketplace": "lazada",
+      "storeName": "Sony Official Store",
+      "price": 15990,
+      "currency": "THB"
+    }
+  ]
+}

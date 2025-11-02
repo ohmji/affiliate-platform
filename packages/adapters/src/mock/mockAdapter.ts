@@ -32,7 +32,8 @@ const catalog: FixtureRule[] = [
   { file: 'lazada-iphone15.json', keywords: ['iphone', '15'] },
   { file: 'shopee-galaxy-s24.json', keywords: ['galaxy', 's24'] },
   { file: 'lazada-dyson-v15.json', keywords: ['dyson', 'v15'] },
-  { file: 'shopee-macbook-air-m3.json', keywords: ['macbook', 'air'] }
+  { file: 'shopee-macbook-air-m3.json', keywords: ['macbook', 'air'] },
+  { file: 'shopee-sony-wh-1000xm6.json', keywords: ['sony','headphones', 'wh-1000xm6'] }
 ];
 
 function pickFixtureFile(input: ResolveProductInput) {
